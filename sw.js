@@ -1,10 +1,10 @@
-const CACHE_NAME = 'espagnol-app-v1';
+const CACHE_NAME = 'espagnol-app-v2';
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  './DOUMOUSPAGNOL - 192px.png',
+  './DOUMOUSPAGNOL - 512px.png'
 ];
 
 self.addEventListener('install', event => {
