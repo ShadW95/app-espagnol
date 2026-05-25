@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#E65100">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="icon-192.png" type="image/png">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" href="DOUMOUSPAGNOL - 192px.png" type="image/png">
+    <link rel="apple-touch-icon" href="DOUMOUSPAGNOL - 192px.png">
     <title>Révision Espagnol V2</title>
     <style>
         :root {
@@ -353,7 +353,8 @@ Plaire / Aimer,"Gustar (regulier, utilise surtout a la 3eme personne)",gustado /
             else if (c === ',' && !inQuotes) { row.push(cur.trim()); cur = ''; }
             else if (c === '
 ' && !inQuotes) { row.push(cur.trim()); if(row.length > 1) rows.push(row); row = []; cur = ''; }
-            else if (c !== '') cur += c;
+            else if (c !== '
+') cur += c;
         }
         if (cur !== '') row.push(cur.trim());
         if (row.length > 1) rows.push(row);
