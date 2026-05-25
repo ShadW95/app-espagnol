@@ -345,16 +345,18 @@ Plaire / Aimer,"Gustar (regulier, utilise surtout a la 3eme personne)",gustado /
     const pronouns = ["yo", "tú", "él/ella/usted", "nosotros", "ustedes"];
     const tenseNames = { present: "Présent", past: "Passé Simple", future: "Futur", part: "Participe Passé", gerund: "Gérondif" };
 
-    function parseCSV(text) {
+function parseCSV(text) {
         let rows = [], row = [], cur = '', inQuotes = false;
         for (let i = 0; i < text.length; i++) {
             let c = text[i];
+            
+            // Ignorer les retours chariot invisibles (Windows)
+            if (c === '\r') continue; 
+            
             if (c === '"') inQuotes = !inQuotes;
             else if (c === ',' && !inQuotes) { row.push(cur.trim()); cur = ''; }
-            else if (c === '
-' && !inQuotes) { row.push(cur.trim()); if(row.length > 1) rows.push(row); row = []; cur = ''; }
-            else if (c !== '
-') cur += c;
+            else if (c === '\n' && !inQuotes) { row.push(cur.trim()); if(row.length > 1) rows.push(row); row = []; cur = ''; }
+            else if (c !== '\n') cur += c;
         }
         if (cur !== '') row.push(cur.trim());
         if (row.length > 1) rows.push(row);
