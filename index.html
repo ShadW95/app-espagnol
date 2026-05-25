@@ -390,16 +390,25 @@ Plaire / Aimer,"Gustar (regulier, utilise surtout a la 3eme personne)",gustado /
         return array;
     }
 
-    // Gestion de la navigation
+// Gestion de la navigation
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
+        const targetScreen = document.getElementById(screenId);
+        if (targetScreen) {
+            targetScreen.classList.add('active');
+        }
     }
 
-    function goToMenu() { showScreen('menu-screen'); }
+    function goToMenu() { 
+        showScreen('menu-screen'); 
+    }
     
     function goToSettings(mode) {
         currentMode = mode;
+        const titleEl = document.getElementById('settings-title');
+        if (titleEl) {
+            titleEl.innerText = mode === 'qcm' ? "Paramètres (Mode QCM)" : "Paramètres (Saisie Libre)";
+        }
         showScreen('settings-screen');
     }
     
