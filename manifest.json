@@ -7,18 +7,17 @@
   "background_color": "#FFF3E0",
   "theme_color": "#E65100",
   "orientation": "portrait",
-  "icons": [
+"icons": [
     {
-      "src": "icon-192.png",
+      "src": "DOUMOUSPAGNOL - 192px.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "DOUMOUSPAGNOL - 512px.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ]
-}
