@@ -1,6 +1,6 @@
 {
-  "name": "Révision Espagnol",
-  "short_name": "Espagnol",
+  "name": "Doumouspagnol",
+  "short_name": "Doumouspagnol",
   "description": "Application de révision des conjugaisons espagnoles (Sud-Américain).",
   "start_url": "./index.html",
   "display": "standalone",
