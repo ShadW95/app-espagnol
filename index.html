@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#E65100">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png" type="image/png">
-<link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <title>Doumouspagnol</title>
     <style>
         :root {
@@ -179,6 +179,30 @@
         .close-modal { position: absolute; top: 15px; right: 20px; font-size: 2rem; cursor: pointer; color: #757575; line-height: 1;}
         .modal-title { margin-top:0; color: var(--primary-color); font-size: 1.6rem; margin-bottom: 5px;}
 
+        /* Mode Devine */
+        .devine-select {
+            padding: 12px 16px;
+            font-size: 1.1rem;
+            border-radius: var(--border-radius);
+            border: 2px solid var(--secondary-color);
+            background: white;
+            min-width: 160px;
+            cursor: pointer;
+        }
+        .devine-select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        .devine-feedback-text {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        .devine-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+        }
     </style>
 </head>
 <body>
@@ -191,6 +215,7 @@
         <div class="menu-buttons">
             <button class="btn" onclick="goToSettings('qcm')">✅ Mode QCM</button>
             <button class="btn" onclick="goToSettings('saisie')">⌨️ Mode Saisie Libre</button>
+            <button class="btn" onclick="goToDevine()">🔍 Mode Devine</button>
             <button class="btn btn-secondary" onclick="goToDictionary()">📖 Dictionnaire des Verbes</button>
         </div>
         <div style="text-align: center; margin-top: 40px; font-size: 0.8rem; color: #9E9E9E;">100% Hors Ligne &bull; Installable</div>
@@ -258,6 +283,62 @@
             <p id="final-message">Buen trabajo!</p>
         </div>
         <button class="btn" onclick="goToMenu()" style="margin-top: 30px;">Retour au Menu</button>
+    </div>
+
+    <!-- ECRAN MODE DEVINE -->
+    <div id="devine-screen" class="screen">
+        <div class="top-bar">
+            <button class="icon-btn" onclick="goToMenu()">🔙</button>
+            <h2 class="screen-title">Mode Devine</h2>
+        </div>
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span id="devine-score-display">Score: 0/10</span>
+            <span id="devine-streak-display">🔥 Série: 0</span>
+        </div>
+
+        <!-- Zone de jeu -->
+        <div id="devine-game-area">
+            <div class="question-card" style="text-align: center;">
+                <div style="font-size: 2.8rem; font-weight: bold; color: var(--primary-color); margin-bottom: 25px;" id="devine-verb-form">...</div>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px;">
+                    <select id="devine-tense-select" class="devine-select">
+                        <option value="" disabled selected>Temps</option>
+                        <option value="present">Présent</option>
+                        <option value="past">Passé simple</option>
+                        <option value="future">Futur</option>
+                    </select>
+                    <select id="devine-person-select" class="devine-select">
+                        <option value="" disabled selected>Personne</option>
+                        <option value="0">Yo</option>
+                        <option value="1">Tú</option>
+                        <option value="2">Él/Ella/Ud.</option>
+                        <option value="3">Nosotros</option>
+                        <option value="4">Ustedes</option>
+                    </select>
+                </div>
+                <button class="btn" id="devine-validate-btn" onclick="checkDevineAnswer()">Valider</button>
+            </div>
+
+            <!-- Feedback -->
+            <div id="devine-feedback" class="feedback-area" style="display: none; margin-top: 20px;">
+                <div class="devine-feedback-text" id="devine-feedback-msg"></div>
+            </div>
+
+            <!-- Boutons bas -->
+            <div class="devine-buttons" style="margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="goToMenu()">Quitter</button>
+                <button class="btn" id="devine-next-btn" onclick="nextDevineQuestion()" style="display: none;">Suivant →</button>
+            </div>
+        </div>
+
+        <!-- Zone de fin de partie -->
+        <div id="devine-result-area" style="display: none; text-align: center; padding: 20px;">
+            <h2>Partie terminée !</h2>
+            <div style="font-size: 3rem; font-weight: bold; color: var(--primary-color); margin: 20px 0;" id="devine-final-score">0/10</div>
+            <p>Meilleure série : <span id="devine-final-streak">0</span> 🔥</p>
+            <button class="btn" onclick="startDevineGame()">Rejouer</button>
+            <button class="btn btn-secondary" onclick="goToMenu()" style="margin-top: 15px;">Quitter</button>
+        </div>
     </div>
 
     <!-- ECRAN DICTIONNAIRE -->
@@ -345,12 +426,22 @@ Plaire / Aimer,"Gustar (regulier, utilise surtout a la 3eme personne)",gustado /
     const pronouns = ["yo", "tú", "él/ella/usted", "nosotros", "ustedes"];
     const tenseNames = { present: "Présent", past: "Passé Simple", future: "Futur", part: "Participe Passé", gerund: "Gérondif" };
 
+    // Variables pour le Mode Devine
+    const TOTAL_DEVINE_QUESTIONS = 10;
+    let devineState = {
+        currentQuestion: null,   // { verbObj, tense, personIndex, form }
+        questionIndex: 0,
+        score: 0,
+        streak: 0,
+        maxStreak: 0,
+        gameActive: false
+    };
+
 function parseCSV(text) {
         let rows = [], row = [], cur = '', inQuotes = false;
         for (let i = 0; i < text.length; i++) {
             let c = text[i];
             
-            // Ignorer les retours chariot invisibles (Windows)
             if (c === '\r') continue; 
             
             if (c === '"') inQuotes = !inQuotes;
@@ -392,7 +483,7 @@ function parseCSV(text) {
         return array;
     }
 
-// Gestion de la navigation
+    // Gestion de la navigation
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         const targetScreen = document.getElementById(screenId);
@@ -634,7 +725,162 @@ function parseCSV(text) {
     }
 
     /* ====================================================================
-       5. DICTIONNAIRE
+       5. MODE DEVINE (NOUVEAU)
+    ==================================================================== */
+    function goToDevine() {
+        showScreen('devine-screen');
+        startDevineGame();
+    }
+
+    function startDevineGame() {
+        // Réinitialise l'état
+        devineState = {
+            currentQuestion: null,
+            questionIndex: 0,
+            score: 0,
+            streak: 0,
+            maxStreak: 0,
+            gameActive: true
+        };
+        // Cache la zone de résultat, montre la zone de jeu
+        document.getElementById('devine-game-area').style.display = 'block';
+        document.getElementById('devine-result-area').style.display = 'none';
+        // Réinitialise les select et le feedback
+        resetDevineSelects();
+        document.getElementById('devine-feedback').style.display = 'none';
+        document.getElementById('devine-next-btn').style.display = 'none';
+        document.getElementById('devine-validate-btn').style.display = 'block';
+        document.getElementById('devine-validate-btn').disabled = false;
+        updateDevineScoreDisplay();
+        // Charge la première question
+        loadDevineQuestion();
+    }
+
+    function loadDevineQuestion() {
+        // Choisir un verbe aléatoire
+        const verb = verbsList[Math.floor(Math.random() * verbsList.length)];
+        // Choisir un temps parmi present, past, future
+        const tenses = ['present', 'past', 'future'];
+        const tense = tenses[Math.floor(Math.random() * tenses.length)];
+        // Choisir un index de personne (0-4)
+        const personIndex = Math.floor(Math.random() * 5);
+        const form = verb[tense][personIndex];
+
+        devineState.currentQuestion = {
+            verb: verb,
+            tense: tense,
+            personIndex: personIndex,
+            form: form
+        };
+
+        // Afficher la forme conjuguée
+        document.getElementById('devine-verb-form').innerText = form;
+        // Réinitialiser les selects
+        resetDevineSelects();
+        // Cacher le feedback et bouton suivant
+        document.getElementById('devine-feedback').style.display = 'none';
+        document.getElementById('devine-next-btn').style.display = 'none';
+        document.getElementById('devine-validate-btn').style.display = 'block';
+        document.getElementById('devine-validate-btn').disabled = false;
+    }
+
+    function resetDevineSelects() {
+        document.getElementById('devine-tense-select').selectedIndex = 0;
+        document.getElementById('devine-person-select').selectedIndex = 0;
+    }
+
+    function checkDevineAnswer() {
+        if (!devineState.gameActive || !devineState.currentQuestion) return;
+
+        const tenseSelect = document.getElementById('devine-tense-select');
+        const personSelect = document.getElementById('devine-person-select');
+        const selectedTense = tenseSelect.value;
+        const selectedPerson = personSelect.value;
+
+        if (!selectedTense || selectedPerson === '') {
+            alert("Veuillez sélectionner un temps et une personne.");
+            return;
+        }
+
+        const correctTense = devineState.currentQuestion.tense;
+        const correctPersonIndex = devineState.currentQuestion.personIndex;
+        const isCorrect = (selectedTense === correctTense && parseInt(selectedPerson) === correctPersonIndex);
+
+        // Met à jour score / streak
+        if (isCorrect) {
+            devineState.score++;
+            devineState.streak++;
+            if (devineState.streak > devineState.maxStreak) {
+                devineState.maxStreak = devineState.streak;
+            }
+        } else {
+            devineState.streak = 0;
+        }
+
+        // Désactive les contrôles
+        document.getElementById('devine-validate-btn').disabled = true;
+        document.getElementById('devine-tense-select').disabled = true;
+        document.getElementById('devine-person-select').disabled = true;
+        document.getElementById('devine-next-btn').style.display = 'block';
+
+        // Affiche le feedback
+        const feedbackDiv = document.getElementById('devine-feedback');
+        const msgDiv = document.getElementById('devine-feedback-msg');
+        const verbInf = devineState.currentQuestion.verb.es.split('(')[0].trim();
+        const tenseName = tenseNames[correctTense];
+        const personName = pronouns[correctPersonIndex];
+        
+        if (isCorrect) {
+            msgDiv.innerHTML = `✅ Correct !<br>${devineState.currentQuestion.form} = <strong>${verbInf}</strong> (${tenseName}, ${personName})`;
+            feedbackDiv.style.backgroundColor = '#e8f5e9';
+        } else {
+            msgDiv.innerHTML = `❌ Incorrect.<br>La bonne réponse : <strong>${devineState.currentQuestion.form}</strong> = ${verbInf} (${tenseName}, ${personName})`;
+            feedbackDiv.style.backgroundColor = '#ffebee';
+        }
+        feedbackDiv.style.display = 'block';
+
+        updateDevineScoreDisplay();
+    }
+
+    function updateDevineScoreDisplay() {
+        document.getElementById('devine-score-display').innerText = `Score: ${devineState.score}/${TOTAL_DEVINE_QUESTIONS}`;
+        document.getElementById('devine-streak-display').innerText = `🔥 Série: ${devineState.streak}`;
+    }
+
+    function nextDevineQuestion() {
+        devineState.questionIndex++;
+        if (devineState.questionIndex >= TOTAL_DEVINE_QUESTIONS) {
+            endDevineGame();
+        } else {
+            // Réactiver les selects
+            document.getElementById('devine-tense-select').disabled = false;
+            document.getElementById('devine-person-select').disabled = false;
+            loadDevineQuestion();
+        }
+    }
+
+    function endDevineGame() {
+        devineState.gameActive = false;
+        // Afficher les résultats
+        document.getElementById('devine-game-area').style.display = 'none';
+        document.getElementById('devine-result-area').style.display = 'block';
+        document.getElementById('devine-final-score').innerText = `${devineState.score} / ${TOTAL_DEVINE_QUESTIONS}`;
+        document.getElementById('devine-final-streak').innerText = devineState.maxStreak;
+    }
+
+    // Permettre la validation avec Entrée dans le mode Devine
+    document.addEventListener('keypress', function(e) {
+        if (document.getElementById('devine-screen').classList.contains('active') && e.key === 'Enter') {
+            if (devineState.gameActive && !document.getElementById('devine-validate-btn').disabled) {
+                checkDevineAnswer();
+            } else if (document.getElementById('devine-next-btn').style.display !== 'none' && devineState.gameActive) {
+                nextDevineQuestion();
+            }
+        }
+    });
+
+    /* ====================================================================
+       6. DICTIONNAIRE
     ==================================================================== */
     function renderDictionary() {
         const list = document.getElementById('dict-list');
@@ -682,7 +928,7 @@ function parseCSV(text) {
     }
 
     /* ====================================================================
-       6. PWA & SERVICE WORKER
+       7. PWA & SERVICE WORKER
     ==================================================================== */
     window.onload = () => { 
         verbsList = processData(csvData); 
