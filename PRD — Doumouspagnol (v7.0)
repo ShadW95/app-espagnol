@@ -1,0 +1,113 @@
+# PRD — Doumouspagnol (v2.0)
+
+**Type :** Feature PRD (sur produit existant)  
+**Statut :** v2.0 — Draft  
+**Auteur :** [Ton prénom]  
+**Date :** Juin 2026  
+
+---
+
+## 1. Problème / Opportunité  
+
+Apprendre la conjugaison espagnole en autodidacte est difficile parce que les ressources existantes (Duolingo, Reverso, manuels) ne permettent pas de s’exercer intensément sur les verbes que l’on a soi‑même choisi de maîtriser, ni d’isoler des schémas d’irrégularité précis. La plupart des applis génériques noient l’apprenant dans un programme figé et ne fonctionnent pas hors ligne.
+
+Le problème n’est pas « il manque une app d’espagnol » — c’est que **la révision des conjugaisons est trop passive et trop déconnectée du vocabulaire que l’on veut réellement utiliser.**
+
+---
+
+## 2. Utilisateur cible & cas d’usage  
+
+**Utilisateur principal :** Francophone adulte (le créateur lui‑même au départ) vivant en Amérique latine ou souhaitant y communiquer, avec un niveau intermédiaire en espagnol, voulant progresser en conjugaison de manière autonome et ciblée.
+
+**Cas d’usage principal :** Révision rapide des conjugaisons en session courte (5–15 min) sur mobile, n’importe où, même sans connexion internet.
+
+**Cas d’usage secondaires :**
+- Consulter le tableau complet d’un verbe comme référence (« est‑ce que *volver* est irrégulier au futur ? »).
+- S’entraîner sur un sous‑ensemble de temps choisi (ex. : uniquement le passé simple avant un voyage).
+- Identifier ses lacunes personnelles via des statistiques simples.
+
+---
+
+## 3. Parcours actuel & paysage  
+
+L’app existe déjà et fonctionne. Elle est accessible via PWA (installable sur appareil, 100 % hors ligne). **La V2 a intégré la mémoire des erreurs, les statistiques et la personnalisation des sessions.** Le parcours actuel complet est :
+
+1. **Menu principal** → choix du mode : QCM, Saisie Libre, Mode Devine, Mes Stats, Dictionnaire.
+2. **Paramètres (pour QCM/Saisie Libre)** → sélection des temps (Présent, Passé Simple, Futur, Participe/Gérondif) + personnalisation de la session (nombre de questions, filtre de verbes, révision prioritaire).
+3. **Quiz (QCM ou Saisie Libre)** → 1 verbe à la fois, 1 pronom aléatoire, feedback avec tableau complet de conjugaison + mise en rouge des irrégularités. L’app enregistre chaque réponse (bonne/mauvaise) dans le stockage local.
+4. **Mode Devine** → un verbe conjugué s’affiche, l’utilisateur doit choisir le temps et la personne. Feedback immédiat et enregistrement des performances.
+5. **Résultats** → score final, message d’encouragement. La session est sauvegardée dans l’historique.
+6. **Mes Stats** → nombre de sessions, score moyen, top 5 des verbes les mieux maîtrisés et les plus difficiles.
+7. **Dictionnaire** → liste de tous les verbes, modal avec tableau complet par verbe.
+
+**Ce qui fonctionne bien :** la mise en évidence des irrégularités (code rouge), le dictionnaire intégré, le mode saisie libre avec correction stricte, le fonctionnement hors ligne, et maintenant la mémoire des erreurs, la révision prioritaire et les statistiques.
+
+**Ce qui manque encore :** l’ajout de verbes personnalisés par l’utilisateur, une révision véritablement espacée (SRS), une synchronisation multi‑appareils (hors MVP), et peut‑être un peu plus de gamification.
+
+---
+
+## 4. Solution proposée  
+
+Doumouspagnol est une PWA mobile‑first de révision des conjugaisons espagnoles (variante latino‑américaine), installable et 100 % hors ligne. **Avec la V2, elle est passée d’un simple drill aléatoire à un outil de révision personnalisée** : l’app se souvient de ce que l’utilisateur rate et propose des sessions ciblées. La personnalisation (nombre de questions, filtres) permet d’adapter la pratique à ses besoins du moment.
+
+**Trois propositions de valeur actuelles :**
+1. L’app apprend de tes erreurs et te refait réviser les verbes que tu rates.
+2. Tu vois ta progression dans le temps, verbes par verbe.
+3. Tu peux adapter chaque session (longueur, réguliers/irréguliers, priorité aux erreurs).
+
+---
+
+## 5. Objectifs / Résultats mesurables  
+
+- L’utilisateur complète au moins 3 sessions par semaine (mesurable via stats locales).
+- Le taux de bonne réponse sur les verbes « difficiles » augmente de session en session.
+- L’app reste installable et 100 % fonctionnelle hors ligne après chaque nouvelle feature.
+- La rétention sur 30 jours est > 60 % (si jamais déployé avec analytics).
+
+---
+
+## 6. Possibilités d’améliorations (V3 et au‑delà)  
+
+Voici une liste d’évolutions futures, classées par impact :
+
+### 6.1 Ajout de verbes personnalisés (P0)
+- L’utilisateur peut ajouter ses propres verbes (infinitif + conjugaisons) via un formulaire ou un import CSV.
+- Ces verbes viennent enrichir le corpus existant et sont pris en compte dans les quiz, les stats et la révision prioritaire.
+
+### 6.2 Système de répétition espacée (SRS) (P0)
+- Utilisation d’un algorithme simple (type Leitner modifié) : les verbes sont révisés à intervalles croissants selon la performance.
+- Les erreurs récentes sont présentées plus souvent, puis espacées si elles sont réussies.
+- Paramétrage possible du nombre de révisions par jour.
+
+### 6.3 Mode « conjugaison inversée » (P1)
+- L’app affiche une forme conjuguée en espagnol, l’utilisateur doit en donner le sens en français. Permet de travailler la compréhension passive.
+
+### 6.4 Export / Import des données de progression (P1)
+- Bouton pour exporter les stats et la mémoire des erreurs (JSON/CSV).
+- Possibilité d’importer sur un autre appareil pour ne pas perdre son historique (contourne l’absence de synchronisation cloud).
+
+### 6.5 Sons et prononciation (P2)
+- Lecture audio de chaque forme conjuguée (via des fichiers pré‑enregistrés ou synthèse vocale locale).
+- Mode « dictée de conjugaison » pour améliorer l’orthographe et l’accentuation.
+
+### 6.6 Thème sombre et accessibilité (P2)
+- Ajout d’un thème sombre automatique (respecte la préférence système).
+- Augmentation des contrastes pour les déficients visuels.
+
+### 6.7 Défis quotidiens et gamification avancée (P3)
+- Un défi du jour (ex. « 10 verbes au passé simple en 2 minutes ») avec classement local.
+- Badges de progression (nombre de sessions, score parfait, maîtrise d’un temps…).
+
+### 6.8 Synchronisation multi‑appareils (P3)
+- Option de sauvegarde sur un compte (via WebDAV, Google Drive, ou autre) pour synchroniser les performances entre appareils, tout en restant hors ligne par défaut.
+
+---
+
+## 7. Note technique  
+
+- L’application est un fichier HTML unique, sans dépendances externes, fonctionnant directement dans le navigateur.
+- Les données utilisateur (performance, historique) sont stockées dans `localStorage`.
+- Le corpus de verbes est intégré dans le code sous forme de chaîne CSV ; l’ajout de verbes personnalisés nécessitera une interface d’édition de ce corpus (stockage local également).
+- L’affichage des irrégularités est réalisé via une fonction JavaScript qui compare le radical du verbe à la forme conjuguée.
+
+Ce PRD servira de base pour les développements futurs et peut être transmis à une IA de codage pour l’implémentation des prochaines fonctionnalités.
