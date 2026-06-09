@@ -320,6 +320,8 @@
 
             <div id="devine-feedback" class="feedback-area" style="display: none; margin-top: 20px;">
                 <div class="devine-feedback-text" id="devine-feedback-msg"></div>
+                <!-- Tableau des trois temps pour la personne concernée -->
+                <table class="conjugation-table" id="devine-conjugation-table" style="margin-top: 15px;"></table>
             </div>
 
             <div class="devine-buttons" style="margin-top: 20px; display: flex; gap: 10px;">
@@ -830,7 +832,7 @@ Plaire / Aimer,"Gustar (regulier, utilise surtout a la 3eme personne)",gustado /
     }
 
     /* ====================================================================
-       7. MODE DEVINE (inchangé mais avec enregistrement)
+       7. MODE DEVINE (avec tableau des 3 temps pour la personne concernée)
     ==================================================================== */
     function goToDevine() {
         showScreen('devine-screen');
@@ -889,11 +891,16 @@ Plaire / Aimer,"Gustar (regulier, utilise surtout a la 3eme personne)",gustado /
         document.getElementById('devine-tense-select').disabled = true;
         document.getElementById('devine-person-select').disabled = true;
         document.getElementById('devine-next-btn').style.display = 'block';
+
         const feedbackDiv = document.getElementById('devine-feedback');
         const msgDiv = document.getElementById('devine-feedback-msg');
-        const verbInf = devineState.currentQuestion.verb.es.split('(')[0].trim();
-        const tenseName = tenseNames[correctTense];
+        const tableDiv = document.getElementById('devine-conjugation-table');
+        const verb = devineState.currentQuestion.verb;
+        const verbInf = verb.es.split('(')[0].trim();
         const personName = pronouns[correctPersonIndex];
+        const tenseName = tenseNames[correctTense];
+
+        // Message
         if (isCorrect) {
             msgDiv.innerHTML = `✅ Correct !<br>${devineState.currentQuestion.form} = <strong>${verbInf}</strong> (${tenseName}, ${personName})`;
             feedbackDiv.style.backgroundColor = '#e8f5e9';
@@ -901,6 +908,14 @@ Plaire / Aimer,"Gustar (regulier, utilise surtout a la 3eme personne)",gustado /
             msgDiv.innerHTML = `❌ Incorrect.<br>La bonne réponse : <strong>${devineState.currentQuestion.form}</strong> = ${verbInf} (${tenseName}, ${personName})`;
             feedbackDiv.style.backgroundColor = '#ffebee';
         }
+
+        // Tableau des trois temps pour la bonne personne
+        let tableHtml = `<tr><th>Temps</th><th>Conjugaison</th></tr>`;
+        tableHtml += `<tr><td>Présent</td><td>${highlightIrregularity(verb.es, verb.present[correctPersonIndex])}</td></tr>`;
+        tableHtml += `<tr><td>Passé simple</td><td>${highlightIrregularity(verb.es, verb.past[correctPersonIndex])}</td></tr>`;
+        tableHtml += `<tr><td>Futur</td><td>${highlightIrregularity(verb.es, verb.future[correctPersonIndex])}</td></tr>`;
+        tableDiv.innerHTML = tableHtml;
+
         feedbackDiv.style.display = 'block';
         recordAnswer(verbInf.toLowerCase(), correctTense, correctPersonIndex, isCorrect);
         updateDevineScoreDisplay();
